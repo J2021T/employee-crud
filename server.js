@@ -1,6 +1,8 @@
 require('dotenv').config();
 const mysql = require('mysql2');
+const inquirer = require('inquirer');
 const cTable = require('console.table');
+const art = require('ascii-art');
 const { createConnection } = require('mysql2/promise');
 
 
@@ -12,15 +14,24 @@ const db = mysql.createConnection(
     password: process.env.DB_PASS,
     database: process.env.DB_NAME
   },
-  console.log(`Connected to the empl_mngmt database.`)
+  art.font('Employee Manager', 'doom', (err, rendered) => {
+    if (err) throw err;
+    return console.log(rendered);
+  })
 );
 
 
 
 db.connect(err => {
     if (err) throw err;
-    db.query(`select * from employees`, (err, result) => {
-      if (err) throw err;
-      console.table(result);
-    });
+    startSystem();
 });
+
+const startSystem = () => {
+  inquirer.prompt({
+    type: 'list',
+    name: 'What would you like to do?',
+    choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update employee role']
+  });
+};
+
