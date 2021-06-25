@@ -17,7 +17,7 @@ const db = mysql.createConnection(
 
 
 
-db.query(`select database()`, (err, result) => {
+db.connect(err => {
     if (err) throw err;
-    console.log(result);
+    console.log("You're connected to the server!");
 });
