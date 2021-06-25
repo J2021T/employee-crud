@@ -19,5 +19,8 @@ const db = mysql.createConnection(
 
 db.connect(err => {
     if (err) throw err;
-    console.log("You're connected to the server!");
+    db.query(`select * from employees`, (err, result) => {
+      if (err) throw err;
+      console.table(result);
+    });
 });
