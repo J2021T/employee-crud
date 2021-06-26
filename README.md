@@ -20,7 +20,7 @@
   *  Install MySQL
   *  Clone repo and navigate to the directory in the terminal
   *  In terminal type 'npm init' to initialize the application
-  *  Install npm inquirer, npm console.table, npm mysql2, npm dotenv, npm figlet
+  *  Install npm inquirer, npm console.table, npm mysql2, [npm dotenv](https://www.npmjs.com/package/dotenv), npm figlet
   *  Create a .env file to hold your MySQL credentials
   *  In mysql terminal from directory login and source the schema.sql and seeds.sql.  Now you are ready to roll!
   
