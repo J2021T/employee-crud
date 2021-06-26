@@ -6,6 +6,7 @@
   The application is an employee management system.  It is used to help keep track of employees, roles, and departments.  It keeps multiples pieces of data, including employee names, job titles, salaries, departments, and managers.  This is done utilizing node and MySQL database.
 
   ## Table of Contents
+  * [Walkthrough](#walkthrough)
   * [Installation](#installation)
   * [Usage](#usage)
   * [Result-Screenshot](#result-screenshot)
@@ -14,6 +15,9 @@
   * [Questions](#questions)
   * [License](#license)
 
+  
+  ## Walkthrough
+  * [Walkthrough video]()
   
   ## Installation
   *  Install Node.js
