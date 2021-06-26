@@ -2,11 +2,9 @@ require('dotenv').config();
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const art = require('ascii-art');
+const figlet = require('figlet');
 const { createConnection } = require('mysql2/promise');
-const { getDepts, getRoles, getEmployees, addDept, addRole } = require('./functions');
-
-
+const { startSystem } = require('./functions/startFunction');
 
 // Connect to database
 const db = mysql.createConnection(
@@ -16,37 +14,18 @@ const db = mysql.createConnection(
     password: process.env.DB_PASS,
     database: process.env.DB_NAME
   },
-  art.font('Employee Manager', 'doom', (err, rendered) => {
+  figlet(`Employee\n Manager`, {font: 'Cybermedium'}, (err, rendered) => {
     if (err) throw err;
-    return console.log(rendered);
+    console.log(rendered);
+    startSystem();
   })
 );
 
+// figlet.fonts((err, fonts) => {
+//   if (err) throw err;
+//   console.dir(fonts);
+// });
 
-
-db.connect(err => {
-    if (err) throw err;
-    startSystem();
-});
-
-const startSystem = () => {
-  inquirer.prompt({
-    type: 'list',
-    name: 'choices',
-    message: 'What would you like to do?',
-    choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update employee role', 'Quit']
-  }).then(res => {
-    if (res.choices === 'View all departments') {
-      getDepts();
-    } else if (res.choices === 'View all roles') {
-      getRoles();
-    } else if (res.choices === 'View all employees') {
-      getEmployees();
-    } else if (res.choices === 'Add a department') {
-      addDept();
-    } else if (res.choices === 'Add a role') {
-      addRole();
-    }
-  });
-};
-
+// db.connect(err => {
+//     if (err) throw err;
+// });

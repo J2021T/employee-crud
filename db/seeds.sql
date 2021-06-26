@@ -29,8 +29,8 @@ VALUES
 ('Billy-Bob', 'Bobson', 3, 1),
 ('Zac', 'Lloyd', 2, 1),
 ('Jeff', 'Campbell', 7, NULL),
-('Dave', 'Schlueneker', 5, 4),
-('Alex', 'Schlueneker', 6, 4),
-('Cory', 'Powell', 8, 7),
-('Cassie', 'Odquist', 10, 9),
-('Jon', 'Felger', 11, 9);
+('Dave', 'Schlueneker', 5, 2),
+('Alex', 'Schlueneker', 6, 2),
+('Cory', 'Powell', 8, 6),
+('Cassie', 'Odquist', 10, 3),
+('Jon', 'Felger', 11, 3);
