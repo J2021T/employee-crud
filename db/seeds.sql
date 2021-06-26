@@ -1,6 +1,6 @@
 USE empl_mngmt;
 
-INSERT INTO departments (name)
+INSERT INTO departments (dept_name)
 VALUES 
 ('Sales'),
 ('Engineering'),
