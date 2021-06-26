@@ -4,7 +4,6 @@ const inquirer = require('inquirer');
 const cTable = require('console.table');
 const figlet = require('figlet');
 const { createConnection } = require('mysql2/promise');
-const { startSystem } = require('./functions/startFunction');
 
 // Connect to database
 const db = mysql.createConnection(
@@ -26,6 +25,269 @@ const db = mysql.createConnection(
 //   console.dir(fonts);
 // });
 
-// db.connect(err => {
-//     if (err) throw err;
-// });
+const startSystem = () => {
+  inquirer.prompt({
+    type: 'list',
+    name: 'choices',
+    message: 'What would you like to do?',
+    choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update employee role', 'Quit']
+  }).then(res => {
+    if (res.choices === 'View all departments') {
+      getDepts()
+    } else if (res.choices === 'View all roles') {
+      getRoles();
+    } else if (res.choices === 'View all employees') {
+      getEmployees();
+    } else if (res.choices === 'Add a department') {
+      addDept();
+    } else if (res.choices === 'Add a role') {
+      addRole();
+    } else if (res.choices === 'Add an employee') {
+      addEmployee();
+    } else if (res.choices === 'Update employee role') {
+        updateRole();
+    } else {
+        console.log('Bye!');
+        return process.exit();
+    }
+  });
+};
+
+// view functions
+
+const display = (err, result) => {
+  if (err) throw (err);
+  console.table(result);
+};
+
+const getDepts = () => {
+  db.query(`select * from departments`, (err, result) => {
+      display(err, result);
+      startSystem();
+    });
+};
+
+const getRoles = () => {
+  db.query(`select r.role_id, r.job_title, r.salary, d.dept_name from roles r join departments d on r.dept_id = d.dept_id`, (err, result) => {
+      display(err, result);
+      startSystem();
+  });
+};
+
+const getEmployees = () => {
+  db.query(`select e.empl_id, e.first_name, e.last_name, r.job_title, r.salary, d.dept_name, concat(m.first_name, ' ', m.last_name) as manager
+      from employees e
+      left join roles r on e.role_id = r.role_id
+      left join departments d on r.dept_id = d.dept_id
+      left join employees m on m.empl_id = e.mngr_id
+      `, (err, result) => {
+          display(err, result);
+          startSystem();
+  });
+};
+
+// add functions
+
+const addDept = (res) => {
+  inquirer.prompt(
+      {
+          type: 'input',
+          name: 'dept_name',
+          message: 'What is the department name?',
+          validate: dept_nameInput => {
+              if (dept_nameInput) {
+                  return true;
+              } else {
+                  console.log('Please enter a department name!');
+                  return false;
+              }
+          }
+      }
+  ).then(data => {
+      const params = data.dept_name;
+      db.query('insert into departments (dept_name) values (?)', params, (err, result) => {
+          if (err) throw err;
+          console.log('Department added');
+          startSystem();
+      });
+  });
+};
+
+const addRole = () => {
+  db.query(`select * from departments`, (err, result) => {
+      if (err) throw err;
+      const dept_names = result.map(({ dept_name, dept_id }) => ({
+          value: dept_id, 
+          name: `${dept_name}`
+      }));
+      console.log(dept_names);
+      inquirer.prompt([
+          {
+              type: 'input',
+              name: 'job_title',
+              message: 'What is the job title for the role?',
+              validate: job_titleInput => {
+                  if (job_titleInput) {
+                      return true;
+                  } else {
+                      console.log('Please enter a job title!');
+                      return false;
+                  }
+              }
+          },
+          {
+              type: 'input',
+              name: 'salary',
+              message: "What is the role's salary?",
+              validate: salaryInput => {
+                  if (salaryInput) {
+                      return true;
+                  } else {
+                      console.log('Please enter a role salary!');
+                      return false;
+                  }
+              }
+          },
+          {
+              type: 'list',
+              name: 'dept_id',
+              message: 'Pick the department your role will be in.',
+              choices: dept_names
+          }
+      ])
+      .then(data => {
+          const params = [data.job_title, data.salary, data.dept_id];
+          db.query('insert into roles (job_title, salary, dept_id) values (?,?,?)', params, (err, result) => {
+              if (err) throw err;
+              console.log('Role added');
+              startSystem();
+          });
+      });
+  });
+};
+
+const addEmployee = () => {
+  db.query(`select r.role_id, r.job_title from roles r`, (err, result) => {
+      if (err) throw err;
+      const roles = result.map(({ role_id, job_title }) => ({
+          value: role_id,
+          name: `${job_title}`
+      }));
+      
+      // const nDepts = [...new Set(depts.map(dept => dept.value))]
+      // .map(value => {
+      //     return depts.find(dept => dept.value === value)
+      // });
+      inquirer.prompt([
+          {
+              type: 'input',
+              name: 'first_name',
+              message: "What is the employee's first name?",
+              validate: first_nameInput => {
+                  if (first_nameInput) {
+                      return true
+                  } else {
+                      console.log('Please enter the first name!');
+                      return false;
+                  }
+              }
+          },
+          {
+              type: 'input',
+              name: 'last_name',
+              message: "What is the employee's last name?",
+              validate: last_nameInput => {
+                  if (last_nameInput) {
+                      return true
+                  } else {
+                      console.log('Please enter the last name!');
+                      return false;
+                  }
+              }
+          },
+          {
+              type: 'list',
+              name: 'role_id',
+              message: 'What role will the new employee fill?',
+              choices: roles
+          }
+      ])
+      .then(data => {
+        const params = [data.first_name, data.last_name, data.role_id];
+    
+        db.query(`insert into employees (first_name, last_name, role_id) values (?,?,?)`, params, (err, result) => {
+            if (err) throw err;
+            console.table(result);
+        });
+        db.query(`select e.empl_id, concat(e.first_name, ' ', e.last_name) as name, r.role_id, r.job_title, d.dept_name from employees e left join roles r on e.role_id = r.role_id left join departments d on r.dept_id = d.dept_id`, (err, result) => {
+            if (err) throw err;
+            const managers = result.map(({ empl_id, name, job_title }) => ({
+                value: empl_id,
+                name: `${name} --- ${job_title}`
+            }));
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'empl_id',
+                    message: 'Pick the employee you just entered so we can add their manager.',
+                    choices: managers
+                },
+                {
+                    type: 'list',
+                    name: 'mngr_id',
+                    message: "Who will be the employee's manager?",
+                    choices: managers         
+                }
+            ])
+            .then(data => {
+                const params = [data.mngr_id, data.empl_id];
+
+                db.query(`update employees set mngr_id = ? where empl_id = ?`, params, (err, result) => {
+                    if (err) throw err;
+                    console.log(`Employee added`);
+                    console.table(result);
+                    startSystem();
+                });
+            });
+        });
+      }); 
+  });
+};
+
+// update function
+
+const updateRole = () => {
+  db.query(`select e.empl_id, concat(e.first_name, ' ', e.last_name) as name, r.role_id, r.job_title from employees e left join roles r on e.role_id = r.role_id`, (err, result) => {
+      if (err) throw err;
+      const employees = result.map(({ empl_id, name }) => ({
+          value: empl_id,
+          name: `${name}`
+      }));
+      const roles = result.map(({ role_id, job_title }) => ({
+          value: role_id,
+          name: `${job_title}`
+      }));
+      inquirer.prompt([
+          {
+              type: 'list',
+              name: 'empl_id',
+              message: "Which employee's role would you like to update?",
+              choices: employees
+          },
+          {
+              type: 'list',
+              name: 'role_id',
+              message: "What will be the employee's role now?",
+              choices: roles
+          }
+      ])
+      .then(data => {
+          const params = [data.role_id, data.empl_id];
+          db.query(`update employees set role_id = ? where empl_id = ?`, params, (err, result) => {
+              if (err) throw err;
+              console.log(`Employee updated`);
+              startSystem();
+          })
+      })
+  });
+};
