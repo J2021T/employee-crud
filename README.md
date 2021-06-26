@@ -3,7 +3,7 @@
   * ![MIT License](https://img.shields.io/badge/license-MIT-blue)
 
   ## Description
-  The application is an employee management system.  It is used to help keep track of employees, roles, and departments.  It keeps multiples pieces of data, including employee names, job titles, salaries, departments, and managers.  This is done utilizing node and MySQL database.
+  The application is an employee management system.  It is used to help keep track of employees, roles, and departments.  It keeps multiple pieces of data, including employee names, job titles, salaries, departments, and managers.  This is done utilizing node and MySQL database.
 
   ## Table of Contents
   * [Walkthrough](#walkthrough)
