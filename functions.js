@@ -22,16 +22,18 @@ const getDepts = () => {
 };
 
 const getRoles = () => {
-    db.query(`select roles.role_id, roles.job_title, roles.salary, departments.dept_name from roles join departments on roles.dept_id = departments.dept_id`, (err, result) => {
+    db.query(`select r.role_id, r.job_title, r.salary, d.dept_name from roles r join departments d on r.dept_id = d.dept_id`, (err, result) => {
         display(err, result);
     });
 };
 
 const getEmployees = () => {
-    db.query(`select employees.empl_id, employees.first_name, employees.last_name, roles.job_title, roles.salary, departments.dept_name
-        from employees left join roles on employees.role_id = roles.role_id
-        left join departments on roles.dept_id = departments.dept_id
-        ;`, (err, result) => {
+    db.query(`select e.empl_id, e.first_name, e.last_name, r.job_title, r.salary, d.dept_name, concat(m.first_name, ' ', m.last_name) as manager
+        from employees e
+        left join roles r on e.role_id = r.role_id
+        left join departments d on r.dept_id = d.dept_id
+        left join employees m on m.empl_id = e.mngr_id
+        `, (err, result) => {
             display(err, result);
     });
 };
