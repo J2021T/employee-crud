@@ -217,7 +217,7 @@ const addEmployee = () => {
     
         db.query(`insert into employees (first_name, last_name, role_id) values (?,?,?)`, params, (err, result) => {
             if (err) throw err;
-            console.table(result);
+            result;
         });
         db.query(`select e.empl_id, concat(e.first_name, ' ', e.last_name) as name, r.role_id, r.job_title, d.dept_name from employees e left join roles r on e.role_id = r.role_id left join departments d on r.dept_id = d.dept_id`, (err, result) => {
             if (err) throw err;
@@ -245,7 +245,7 @@ const addEmployee = () => {
                 db.query(`update employees set mngr_id = ? where empl_id = ?`, params, (err, result) => {
                     if (err) throw err;
                     console.log(`Employee added`);
-                    console.table(result);
+                    result;
                     startSystem();
                 });
             });
