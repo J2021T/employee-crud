@@ -66,11 +66,10 @@ const addDept = (res) => {
 const addRole = () => {
     db.query(`select * from departments`, (err, result) => {
         if (err) throw err;
-        const dept_names = result.map(dept => {
-            let nDept = {}
-            nDept[dept.dept_id] = dept.dept_name
-            return nDept
-        });
+        const dept_names = result.map(({ dept_name, dept_id }) => ({
+            value: dept_id, 
+            name: `${dept_name}`
+        }));
         console.log(dept_names);
         inquirer.prompt([
             {
@@ -108,11 +107,11 @@ const addRole = () => {
         ])
         .then(data => {
             console.log(data.dept_id);
-            // const params = [data.job_title, data.salary, dept_id];
-            // db.query('insert into roles (job_title, salary, dept_id) values (?,?,?)', params, (err, result) => {
-            //     if (err) throw err;
-            //     console.log('Role added');
-            // });
+            const params = [data.job_title, data.salary, data.dept_id];
+            db.query('insert into roles (job_title, salary, dept_id) values (?,?,?)', params, (err, result) => {
+                if (err) throw err;
+                console.log('Role added');
+            });
         });
     });
 };
