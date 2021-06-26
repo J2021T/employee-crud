@@ -4,7 +4,7 @@ const inquirer = require('inquirer');
 const cTable = require('console.table');
 const art = require('ascii-art');
 const { createConnection } = require('mysql2/promise');
-const { getDepts, getRoles, getEmployees } = require('./functions');
+const { getDepts, getRoles, getEmployees, addDept, addRole } = require('./functions');
 
 
 
@@ -34,7 +34,7 @@ const startSystem = () => {
     type: 'list',
     name: 'choices',
     message: 'What would you like to do?',
-    choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update employee role']
+    choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update employee role', 'Quit']
   }).then(res => {
     if (res.choices === 'View all departments') {
       getDepts();
@@ -42,6 +42,10 @@ const startSystem = () => {
       getRoles();
     } else if (res.choices === 'View all employees') {
       getEmployees();
+    } else if (res.choices === 'Add a department') {
+      addDept();
+    } else if (res.choices === 'Add a role') {
+      addRole();
     }
   });
 };

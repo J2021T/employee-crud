@@ -1,3 +1,4 @@
+const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const { createConnection } = require('mysql2/promise');
 
@@ -38,6 +39,83 @@ const getEmployees = () => {
     });
 };
 
+const addDept = (res) => {
+    inquirer.prompt(
+        {
+            type: 'input',
+            name: 'dept_name',
+            message: 'What is the department name?',
+            validate: dept_nameInput => {
+                if (dept_nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter a department name!');
+                    return false;
+                }
+            }
+        }
+    ).then(data => {
+        const params = data.dept_name;
+        db.query('insert into departments (dept_name) values (?)', params, (err, result) => {
+            if (err) throw err;
+            console.log('Department added');
+        });
+    });
+};
+
+const addRole = () => {
+    db.query(`select * from departments`, (err, result) => {
+        if (err) throw err;
+        const dept_names = result.map(dept => {
+            let nDept = {}
+            nDept[dept.dept_id] = dept.dept_name
+            return nDept
+        });
+        console.log(dept_names);
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'job_title',
+                message: 'What is the job title for the role?',
+                validate: job_titleInput => {
+                    if (job_titleInput) {
+                        return true;
+                    } else {
+                        console.log('Please enter a job title!');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: "What is the role's salary?",
+                validate: salaryInput => {
+                    if (salaryInput) {
+                        return true;
+                    } else {
+                        console.log('Please enter a role salary!');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'list',
+                name: 'dept_id',
+                message: 'Pick the department your role will be in.',
+                choices: dept_names
+            }
+        ])
+        .then(data => {
+            console.log(data.dept_id);
+            // const params = [data.job_title, data.salary, dept_id];
+            // db.query('insert into roles (job_title, salary, dept_id) values (?,?,?)', params, (err, result) => {
+            //     if (err) throw err;
+            //     console.log('Role added');
+            // });
+        });
+    });
+};
 
 
-module.exports = { getDepts, getRoles, getEmployees }
+module.exports = { getDepts, getRoles, getEmployees, addDept, addRole }
