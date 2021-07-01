@@ -17,7 +17,7 @@
 
   
   ## Walkthrough
-  * [Walkthrough video](https://drive.google.com/file/d/1rfNoDHJLg0LlfDr9uf5m2ifSisXL4vrx/view)
+  * [Walkthrough video](https://drive.google.com/file/d/1ccAaaWC61-Nc2SkYWmrdF07o4EwwGdwT/view)
   
   ## Installation
   *  Install Node.js
